@@ -1,0 +1,10 @@
+graph LR
+    A["Windows events"] --> C["Evidence collector"]
+    B["VDI product logs"] --> C
+    C --> D["Default redaction"]
+    D --> E["Portable JSON bundle"]
+    E --> F["Deterministic rules"]
+    F --> G["Evidence and findings"]
+    G --> H["Console or JSON report"]
+    G -. redacted bounded context .-> I["Optional LLM API"]
+    I -. advisory explanation .-> H

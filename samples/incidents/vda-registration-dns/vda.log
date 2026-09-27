@@ -1,0 +1,6 @@
+2026-09-27T10:14:03Z host=vda-021.example.test service="Citrix Desktop Service" level=Error
+The service could not register with delivery controller ddc-02.example.test.
+Socket error WSAHOST_NOT_FOUND: The DNS name does not exist.
+Configured controllers: ddc-01.example.test, ddc-02.example.test
+Operator email: alex@example.test
+Source address: 192.0.2.21

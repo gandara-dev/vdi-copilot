@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests (Python ${{ matrix.python }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+      - name: Run tests
+        run: python -m pytest --cov=vdi_copilot --cov-report=term-missing --cov-fail-under=75
+      - name: Run synthetic smoke test
+        run: >-
+          vdi-copilot analyze samples/incidents/vda-registration-dns
+          --format json --output smoke-report.json
+
+  lint:
+    name: Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install 'ruff==0.13.2'
+      - run: ruff check .
+      - run: ruff format --check .
+
+  diagram-validation:
+    name: Mermaid diagram validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render versioned Mermaid sources
+        run: |
+          for diagram in docs/diagrams/*.mmd; do
+            output="/tmp/$(basename "${diagram%.mmd}").svg"
+            docker run --rm --volume "$PWD:/data:ro" \
+              ghcr.io/mermaid-js/mermaid-cli/mermaid-cli@sha256:a6fb0574dded4086888b5e38476899c9aff8963196f689f11a0f8fceee588ce1 \
+              -i "/data/$diagram" -o "$output" -b white
+          done
