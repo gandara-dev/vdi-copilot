@@ -16,8 +16,17 @@ def default_rules_path() -> Path:
 
 def load_rules(path: str | Path | None = None) -> list[dict[str, Any]]:
     rule_path = Path(path) if path else default_rules_path()
-    data = json.loads(rule_path.read_text(encoding="utf-8"))
-    if data.get("schema_version") != 1 or not isinstance(data.get("rules"), list):
+    return validate_rules(json.loads(rule_path.read_text(encoding="utf-8")))
+
+
+def validate_rules(data: Any) -> list[dict[str, Any]]:
+    """Validate a parsed rule document and return its rules."""
+
+    if (
+        not isinstance(data, dict)
+        or data.get("schema_version") != 1
+        or not isinstance(data.get("rules"), list)
+    ):
         raise ValueError("Rule file must use schema_version 1 and contain a rules array.")
 
     required = {"id", "title", "severity", "confidence", "all", "any", "none", "recommendations"}

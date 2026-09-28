@@ -11,6 +11,25 @@ but it cannot add a cause or silently change confidence.
 
 ![VDI Copilot synthetic incident demo](docs/demo.gif)
 
+## Try it: Evidence Analyzer
+
+**[Open the Evidence Analyzer](https://gandara-dev.github.io/vdi-copilot/)** to
+run the rule engine in the browser, with no installation.
+
+![Evidence Analyzer](docs/evidence-analyzer.jpg)
+
+- Pick one of four synthetic incidents, or paste and open your own log files.
+- See what redaction removed (credentials, emails, IPs, host names, user paths,
+  SIDs) and the evidence exactly as the rules saw it.
+- Each finding shows its severity, the terms that triggered it, and reviewable
+  recommendations; download the same JSON report the CLI writes.
+
+Everything runs locally in the browser and nothing is uploaded. The page's
+engine is tested against fixtures generated from this Python package, so it
+redacts and matches exactly like `vdi-copilot analyze`. Run it from a clone with
+`python -m http.server --directory site 8000`. The optional LLM explanation is
+available only in the CLI.
+
 ## Architecture
 
 ![VDI Copilot architecture](docs/diagrams/architecture-overview.svg)
@@ -34,11 +53,16 @@ Expected first finding:
 Rule: vda-registration-dns
 ```
 
-Try the second known-cause incident:
+Every packaged rule has a synthetic known-cause incident:
 
 ```bash
 vdi-copilot analyze samples/incidents/storefront-sta-failure --format json
+vdi-copilot analyze samples/incidents/profile-container-lock
+vdi-copilot analyze samples/incidents/kerberos-clock-skew --format html --output report.html
 ```
+
+`--format html` writes a standalone report for a ticket or an email; every value
+from the evidence and the rules is HTML-escaped.
 
 ## Collect evidence on Windows
 
@@ -80,7 +104,8 @@ regional processing, and access controls remain the operator's responsibility.
 
 ## Deterministic rules
 
-The packaged schema-version 1 rules cover synthetic examples for:
+The packaged schema-version 1 rules each have a synthetic incident in
+`samples/incidents`, and a test fails if a rule has none. They cover:
 
 - VDA registration failure caused by controller DNS resolution;
 - StoreFront/Gateway STA validation failure;
@@ -145,6 +170,17 @@ pytest --cov=vdi_copilot
 ruff check .
 ruff format --check .
 ```
+
+The Evidence Analyzer page has its own suite, which needs Node.js 20 or newer
+and no npm packages:
+
+```bash
+node --test tests/web/*.test.mjs
+```
+
+It asserts `site/lib/analyzer.js` against `tests/fixtures/analyzer-cases.json`,
+which `tests/update_analyzer_fixtures.py` generates from the Python engine.
+pytest fails when that file or `site/data/analyzer-data.json` is out of date.
 
 CI runs the synthetic known-cause suite on Python 3.11 and 3.13, on both Linux
 and Windows. No Citrix infrastructure, credentials, or model download is used.

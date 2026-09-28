@@ -30,6 +30,10 @@ jobs:
         run: >-
           vdi-copilot analyze samples/incidents/vda-registration-dns
           --format json --output smoke-report.json
+      - name: Render the HTML report
+        run: >-
+          vdi-copilot analyze samples/incidents/kerberos-clock-skew
+          --format html --output smoke-report.html
       - name: Run Windows event collector smoke test
         if: matrix.os == 'windows-latest' && matrix.python == '3.13'
         shell: pwsh
@@ -41,6 +45,17 @@ jobs:
             throw 'Windows collector smoke test produced an invalid bundle.'
           }
 
+  web-tests:
+    name: Evidence Analyzer tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run fixtures generated from the Python engine
+        run: node --test tests/web/*.test.mjs
+
   lint:
     name: Ruff
     runs-on: ubuntu-latest
@@ -50,7 +65,7 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-      - run: python -m pip install 'ruff==0.13.2'
+      - run: python -m pip install 'ruff==0.16.9'
       - run: ruff check .
       - run: ruff format --check .
 

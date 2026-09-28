@@ -6,7 +6,10 @@ Every change must pass:
 
 - editable installation from a fresh clone with no runtime dependencies;
 - pytest on Python 3.11 and 3.13, Windows and Linux, with at least 75% coverage;
-- both synthetic known-cause incidents through the installed CLI;
+- every synthetic known-cause incident through the installed CLI, including
+  the HTML report format;
+- the Evidence Analyzer's Node suite against fixtures generated from the Python
+  engine, with pytest confirming the fixtures and page data are current;
 - privacy, rule validation, CLI, and Ollama request-contract tests;
 - Ruff lint and formatting checks;
 - CodeQL and Mermaid rendering;
@@ -26,6 +29,8 @@ ruff check .
 ruff format --check .
 vdi-copilot analyze samples/incidents/vda-registration-dns
 vdi-copilot analyze samples/incidents/storefront-sta-failure --format json
+vdi-copilot analyze samples/incidents/kerberos-clock-skew --format html --output report.html
+node --test tests/web/*.test.mjs
 ```
 
 ## Environment acceptance gate

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Evidence Analyzer | VDI Copilot</title>
+  <meta name="description" content="Paste Citrix VDI log evidence, redact identifiers in the browser, and see which deterministic troubleshooting rules match.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="banner" role="note">
+    Runs entirely in your browser: evidence you paste or open is never uploaded. Redaction is best effort,
+    so do not paste production secrets. The sample incidents are synthetic.
+  </div>
+
+  <div class="wrap">
+    <header class="top">
+      <h1>Evidence Analyzer</h1>
+      <p>
+        Try the <a href="https://github.com/gandara-dev/vdi-copilot">VDI Copilot</a> rule engine on Citrix VDI evidence.
+        It redacts credentials and identifiers first, then applies deterministic rules. The browser engine is tested
+        against fixtures generated from the Python CLI, so both produce the same findings.
+      </p>
+    </header>
+
+    <div class="layout">
+      <section class="card" aria-labelledby="evidence-title">
+        <h2 id="evidence-title">1. Evidence</h2>
+        <p class="hint">Start from a synthetic incident, or paste and open your own logs.</p>
+        <div class="incidents" id="incidents" role="group" aria-label="Sample incidents"></div>
+
+        <div class="editor">
+          <label for="source-name">Source name</label>
+          <input id="source-name" type="text" value="pasted.log" autocomplete="off" spellcheck="false">
+          <label for="evidence-text">Log text</label>
+          <textarea id="evidence-text" rows="8" spellcheck="false" placeholder="Paste event log, VDA, StoreFront, or profile logs here"></textarea>
+          <div class="row">
+            <button type="button" id="add-text">Add as evidence</button>
+            <label class="button" for="open-files">Open log files</label>
+            <input id="open-files" type="file" multiple accept=".log,.txt,.xml,.json" class="sr-only">
+          </div>
+        </div>
+
+        <h3>Evidence to analyze</h3>
+        <ul class="sources" id="sources"></ul>
+
+        <label class="switch"><input type="checkbox" id="redact" checked> Redact before analysis</label>
+        <p class="warning" id="redact-warning" hidden>Redaction is off: identifiers stay in the evidence and in any downloaded report.</p>
+        <button type="button" class="primary" id="analyze">Analyze evidence</button>
+      </section>
+
+      <section class="card" aria-labelledby="results-title">
+        <h2 id="results-title">2. Findings</h2>
+        <div id="summary" class="summary" role="status"></div>
+        <div id="findings"></div>
+        <div class="row">
+          <button type="button" id="download-json" disabled>Download report.json</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" aria-labelledby="view-title">
+      <h2 id="view-title">3. Evidence as analyzed</h2>
+      <p class="hint">What the rules actually saw. Redaction tokens are marked, and terms that triggered a finding are highlighted.</p>
+      <div id="evidence-view"><p class="hint">Run an analysis to see the processed evidence.</p></div>
+    </section>
+
+    <details class="card rules">
+      <summary><h2>Rules in this demo</h2></summary>
+      <p class="hint">A rule matches when every <em>all</em> term and at least one <em>any</em> term appear, and no <em>none</em> term does. Matching is case-insensitive.</p>
+      <div id="rules"></div>
+    </details>
+
+    <footer>
+      The optional local LLM explanation (Ollama-compatible) is available only in the CLI and only explains findings
+      that were already redacted. A missing finding is not proof that an environment is healthy.
+    </footer>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

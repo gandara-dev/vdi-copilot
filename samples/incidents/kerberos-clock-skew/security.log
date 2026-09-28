@@ -1,0 +1,5 @@
+2026-09-27T12:40:55Z host=ddc-01.example.test source=Microsoft-Windows-Security-Kerberos level=Error
+A Kerberos error was received: KRB_AP_ERR_SKEW.
+The time difference is too great between the client and the server.
+Client time: 2026-09-27T12:47:31Z Server time: 2026-09-27T12:40:55Z
+Affected service: Citrix Broker Service on 198.51.100.14
