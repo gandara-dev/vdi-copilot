@@ -164,6 +164,7 @@ and Windows. No Citrix infrastructure, credentials, or model download is used.
 - [Architecture](docs/architecture.md)
 - [Operations and privacy](docs/operations-guide.md)
 - [Testing](docs/testing.md)
+- [Release verification](docs/release-verification.md)
 - [Security policy](SECURITY.md)
 - [Contributing](CONTRIBUTING.md)
 

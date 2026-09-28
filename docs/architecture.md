@@ -39,6 +39,6 @@ advisory text outside the deterministic finding contract.
 
 ## Current limitations
 
-Version `0.1.0` uses substring correlation rather than a temporal event graph.
+Version `0.1.1` uses substring correlation rather than a temporal event graph.
 Default rules cover a deliberately small set of known causes. Organization-
 specific identifiers may require custom redaction and rules.

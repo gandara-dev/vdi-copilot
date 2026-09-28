@@ -1,11 +1,17 @@
 import json
+from importlib.metadata import version
 from pathlib import Path
 
 import pytest
 
+from vdi_copilot import __version__
 from vdi_copilot.cli import main
 
 ROOT = Path(__file__).parents[1]
+
+
+def test_package_versions_match() -> None:
+    assert __version__ == version("vdi-copilot")
 
 
 def test_analyze_json_output(tmp_path: Path) -> None:

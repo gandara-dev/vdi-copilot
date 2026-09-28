@@ -30,6 +30,16 @@ jobs:
         run: >-
           vdi-copilot analyze samples/incidents/vda-registration-dns
           --format json --output smoke-report.json
+      - name: Run Windows event collector smoke test
+        if: matrix.os == 'windows-latest' && matrix.python == '3.13'
+        shell: pwsh
+        run: |
+          vdi-copilot collect --event-log Application --max-events 1 --output collected-smoke.json
+          vdi-copilot analyze collected-smoke.json --format json --output collected-report.json
+          $bundle = Get-Content collected-smoke.json -Raw | ConvertFrom-Json
+          if (-not $bundle.redacted -or $bundle.evidence.Count -ne 1) {
+            throw 'Windows collector smoke test produced an invalid bundle.'
+          }
 
   lint:
     name: Ruff
