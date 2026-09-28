@@ -11,7 +11,7 @@ from .evidence import collect_windows_events, load_evidence, write_bundle
 from .llm import explain_with_ollama
 from .models import AnalysisReport, Evidence
 from .redact import redact_text
-from .report import render_console, render_json
+from .report import render_console, render_html, render_json
 from .rules import evaluate_rules, load_rules
 
 
@@ -38,7 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     analyze = subparsers.add_parser("analyze", help="Analyze a file, directory, or bundle.")
     analyze.add_argument("input", help="Evidence file, directory, or collected bundle.")
     analyze.add_argument("--rules", help="Custom schema-version 1 JSON rule file.")
-    analyze.add_argument("--format", choices=("console", "json"), default="console")
+    analyze.add_argument("--format", choices=("console", "json", "html"), default="console")
     analyze.add_argument("--output", help="Write the rendered report to this file.")
     analyze.add_argument("--llm", choices=("none", "ollama"), default="none")
     analyze.add_argument("--endpoint", default="http://127.0.0.1:11434")
@@ -93,7 +93,8 @@ def _analyze(args: argparse.Namespace) -> int:
             api_key=os.environ.get(args.api_key_env),
         )
 
-    rendered = render_json(report) if args.format == "json" else render_console(report)
+    renderers = {"json": render_json, "html": render_html, "console": render_console}
+    rendered = renderers[args.format](report)
     if args.output:
         Path(args.output).write_text(rendered + "\n", encoding="utf-8")
     else:

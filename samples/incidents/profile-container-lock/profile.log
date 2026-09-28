@@ -1,0 +1,5 @@
+2026-09-27T11:02:17Z host=vda-034.example.test component=ProfileContainer level=Error
+Failed to attach the profile container for synthetic user u4471.
+The profile is locked by another process: ERROR_SHARING_VIOLATION (0x20).
+Container path: \files-01.example.test\profiles\u4471\profile.vhdx
+A temporary profile was created for this logon.
