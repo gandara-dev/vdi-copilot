@@ -4,6 +4,14 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+> [!WARNING]
+> **Archived.** This project is no longer maintained and the repository is
+> read-only. Do not use it with real or company data. The optional `--llm`
+> path accepts any remote endpoint without a loopback guard, and redaction is
+> best effort: it does not mask `DOMAIN\user` names, host names without dots,
+> IPv6 or MAC addresses, or personal names. The code stays available for
+> reference only.
+
 VDI incidents produce scattered Windows events, VDA logs, StoreFront logs, and
 guesses. VDI Copilot turns those artifacts into an evidence-first report. Its
 deterministic rules own every finding; an optional LLM may explain the report,
